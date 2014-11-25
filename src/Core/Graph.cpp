@@ -94,24 +94,25 @@ bool Graph::ColorSerial(unsigned int colorCount)
 		}
 		for(int j = 0; j < localMaxNodes.size(); j++)
 		{
-			unsigned int colors[allNodes.size()], maxColor;
-			for(int i = 0; i < allNodes.size()+1; i++)
+			bool colors[allNodes.size() + 1], maxColor;
+			colors[0] = true;
+			for(int i = 1; i < allNodes.size() + 1; i++)
 			{
-				colors[i] = 0;
+				colors[i] = false;
 			}
 			for (int i = 0; i < localMaxNodes[j]->GetNeighbours().size(); i++)
 			{
-				colors[localMaxNodes[j]->GetNeighbours()[i]->GetColor()] = 1;
+				colors[localMaxNodes[j]->GetNeighbours()[i]->GetColor()] = true;
 			}
-			for (int i = 0; i < allNodes.size()+1; i++)
+			for (int i = 0; i < allNodes.size() + 1; i++)
 			{
-				if (colors[i] == 0)
+				if (!colors[i])
 				{
 					maxColor = i;
 					break;
 				}
 			}
-			if (maxColor >= colorCount)
+			if (maxColor > colorCount)
 			{
 				for (int i = 0; i < allNodes.size(); i++)
 				{

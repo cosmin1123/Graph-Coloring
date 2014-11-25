@@ -3,10 +3,10 @@
 
 class Graph
 {
-
+public:
+	std::vector<Node> allNodes;
 public:
 	Graph(){}
-	std::vector<Node> allNodes;
 	bool Generate(unsigned int count
 				, unsigned int fillPercentage);
 	bool ColorSerial(unsigned int colorCount);

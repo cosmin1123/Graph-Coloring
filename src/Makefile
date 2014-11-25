@@ -5,13 +5,22 @@ build_OMP: Graph.o
 	g++ -fopenmp -std=c++11 Versions/OMPVersion.cpp Graph.o -o OMP
 
 build_THREADS: Graph.o
-	g++ Versions/ThreadsVersion.cpp -o THREADS -pthread -fopenmp -std=c++11
+	g++ -fopenmp -std=c++11 Versions/ThreadsVersion.cpp Graph.o -lpthread -o THREADS 
 
 build_MPI: Graph.o
-	mpicxx -std=c++11 Versions/MPIVersion.cpp -o MPI -fopenmp
+	mpicxx -fopenmp -std=c++11 Versions/MPIVersion.cpp Graph.o -o MPI 
 
 Graph.o:
 	g++ -fopenmp -std=c++11 -c Core/Graph.cpp -o Graph.o
+
+run_OMP:
+	./OMP
+
+run_THREADS:
+	./THREADS
+
+run_MPI:
+	mpirun -np 8 ./MPI
 
 build_run: clean build_OMP build_MPI build_THREADS
 	./THREADS
