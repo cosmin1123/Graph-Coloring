@@ -27,7 +27,8 @@ bool Graph::Generate(unsigned int count
 	}
 
 	unsigned int i = 0, edgesPerNode = ((count - 1) * fillPercentage) / 100;
-	unsigned seed = std::chrono::system_clock::now().time_since_epoch().count();
+	//unsigned seed = std::chrono::system_clock::now().time_since_epoch().count();
+	unsigned seed = 0;
 	std::mt19937 generator(seed);
 	std::uniform_int_distribution<int> distribution(0, count - 1);
 
