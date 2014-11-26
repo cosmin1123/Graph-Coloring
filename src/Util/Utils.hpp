@@ -1,3 +1,5 @@
+#ifndef UTILS_H
+#define UTILS_H
 #include <vector>
 
 namespace Utils
@@ -15,3 +17,5 @@ namespace Utils
 		return false;
 	}
 }
+
+#endif
