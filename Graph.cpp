@@ -22,7 +22,7 @@ bool Graph::Generate(unsigned int count
 	catch (...)
 	{
 		std::cerr << "Exception: Couldn't allocate that many nodes.\n";
-		return 1;
+		return 0;
 	}
 
 	unsigned int i = 0, edgesPerNode = ((count - 1) * fillPercentage) / 100;
