@@ -90,11 +90,11 @@ int main()
 				}
 			}
 			
+			#pragma omp critical
 			for (int i = 0; i < IdSet.size(); i++)
 			{
 				if(IdSet[i] == localMaxNodes[j]->GetId())
 				{
-					#pragma omp critical
 					IdSet.erase(IdSet.begin() + i);
 					break;
 				}
