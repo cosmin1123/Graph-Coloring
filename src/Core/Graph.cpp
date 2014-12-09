@@ -140,7 +140,7 @@ bool Graph::TestColorCorrectness(unsigned int colorCount)
 {
 	for (int i = 0; i < allNodes.size(); i++)
 	{
-		if (allNodes[i].GetColor() == colorCount)
+		if (allNodes[i].GetColor() > colorCount || allNodes[i].GetColor() == 0)
 		{
 			return false;
 		}
