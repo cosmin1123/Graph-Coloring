@@ -7,7 +7,7 @@
 #include "../Core/Utils.hpp"
 using namespace std;
 
-#define GSIZE 64
+#define GSIZE 8
 
 pthread_mutex_t allNodes_mutex;
 pthread_mutex_t idSet_mutex;
@@ -96,9 +96,7 @@ void* doThreadWork(void* argument){
 	
 	int startIndex =  param->startIndex;
 	int numOfNodes = param->numOfNodes;
-	std::cout << "I am doing " << startIndex << " to " << startIndex + numOfNodes << std::endl;
 	std::vector<unsigned int>* IdSet = param->IdSet;
-	// std::vector<Node*>* localMaxNodes = param->localMaxNodes;
 	std::vector<Node>* allNodes = param->allNodes;
 	
 	while (IdSet->size())
