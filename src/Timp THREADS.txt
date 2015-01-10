@@ -1,0 +1,9 @@
+For 1024 nodes: 51.5093sec, using 1 threads
+For 1024 nodes: 43.4884sec, using 2 threads
+For 1024 nodes: 40.097sec, using 4 threads
+For 1024 nodes: 46.5966sec, using 8 threads
+For 256 nodes: 0.856904sec, using 1 threads
+For 512 nodes: 6.45326sec, using 1 threads
+For 512 nodes: 5.29985sec, using 2 threads
+For 512 nodes: 5.01861sec, using 4 threads
+For 512 nodes: 5.86038sec, using 8 threads
