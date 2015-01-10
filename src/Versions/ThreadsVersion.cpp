@@ -1,19 +1,35 @@
 #include <iostream>
 #include <random>
-#include <iostream>
+#include <fstream>
+#include <sstream>
+#include <cstdio>
+#include <omp.h>
 #include <chrono>
 #include <pthread.h>
 #include "../Core/Graph.hpp"
 #include "../Core/Utils.hpp"
 using namespace std;
 
-#define GSIZE 8
+#define GSIZE 512
+
+double time_diff() {
+	static double begin_time = 0;
+
+	double diff = (omp_get_wtime() - begin_time) ; 
+	if(begin_time != 0) {
+		begin_time = 0;
+	} else {
+		begin_time = omp_get_wtime();
+	}
+	return diff;
+}
 
 pthread_mutex_t allNodes_mutex;
 pthread_mutex_t idSet_mutex;
 pthread_barrier_t   barrier;
 
 bool stillAlive = true;
+int minColor = 0;
 
 struct ThreadParam{
 	int startIndex;
@@ -37,13 +53,15 @@ int main(int argc, char** argv){
 		return -1;
 	}
 
+	time_diff();
+
 	int numOfThreads = atoi(argv[1]);
 
 	Graph g;
     g.Generate(GSIZE, 50);
 
     std::cout << "Graf initial:\n";
-	g.Print();
+	// g.Print();
 
 	std::vector<unsigned int> IdSet;
 	for (int i = 0; i < g.allNodes.size(); i++)
@@ -57,7 +75,6 @@ int main(int argc, char** argv){
 	pthread_barrier_init (&barrier, NULL, numOfThreads);
 
 	std::vector<Node*> localMaxNodes;
-
 	int ret;
 	for(int i = 0; i < numOfThreads; i++)
 	{
@@ -87,8 +104,21 @@ int main(int argc, char** argv){
 	}
 
 	std::cout << "Graf final:\n";
-	g.Print();
+	// g.Print();
 
+	double measuredTime = time_diff();
+	std::ofstream f("Timp THREADS.txt", std::ios::app);
+	f << "For " << GSIZE << " nodes" << ": " << measuredTime << "sec, using " 
+		<< numOfThreads << " threads" << std::endl;
+
+	std::cout << "We require at least " << minColor << " colors." << std::endl;
+	std::cout << "Checking correctness.." << std::endl;
+	if (g.TestColorCorrectness(minColor)){
+		std::cout << "True." << std::endl;
+	}
+	else{
+		std::cout << "False." << std::endl;
+	}
 }
 
 void* doThreadWork(void* argument){
@@ -98,9 +128,13 @@ void* doThreadWork(void* argument){
 	int numOfNodes = param->numOfNodes;
 	std::vector<unsigned int>* IdSet = param->IdSet;
 	std::vector<Node>* allNodes = param->allNodes;
-	
+	// stringstream ss;
+	// ss << "Working from " << startIndex << " to " << startIndex + numOfNodes << endl;
+	// cout << ss.str();
+
 	while (IdSet->size())
 	{
+
 		std::vector<Node*> localMaxNodes;
 		for(int i = startIndex; i < startIndex + numOfNodes; i++)
 		{
@@ -123,7 +157,6 @@ void* doThreadWork(void* argument){
 				localMaxNodes.push_back(&(*allNodes)[i]);
 			}
 		}
-
 		for(int j = 0; j < localMaxNodes.size(); j++)
 		{
 			unsigned int colors[allNodes->size()+1];
@@ -143,23 +176,26 @@ void* doThreadWork(void* argument){
 				{
 					pthread_mutex_lock(&allNodes_mutex);
 					localMaxNodes[j]->SetColor(i);
+					if (i > minColor){
+						minColor = i;
+					}
 					pthread_mutex_unlock(&allNodes_mutex);
 					break;
 				}
 			}
 
+			// A great segfault was resolved here
+			pthread_mutex_lock(&idSet_mutex);
 			for (int i = 0; i < IdSet->size(); i++)
 			{
 				if((*IdSet)[i] == localMaxNodes[j]->GetId())
 				{
-					pthread_mutex_lock(&idSet_mutex);
 					IdSet->erase(IdSet->begin() + i);
-					pthread_mutex_unlock(&idSet_mutex);
 					break;
 				}
 			}
+			pthread_mutex_unlock(&idSet_mutex);
 		}
-
 	}
 }
 
