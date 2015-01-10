@@ -32,3 +32,6 @@ clean:
 	rm -f MPI
 	rm -f THREADS
 	rm -f *.o
+
+plot:
+	gnuplot -persist -e "set ylabel 'Num threads'; set xlabel 'Time (sec)'; plot 'mpi_out' using 2:1 title 'MPI' with lines, 'thread_out' using 2:1 title 'THREAD' with lines,'omp_out' using 2:1 title 'OMP' with lines; set terminal png; set out 'opt.png';replot ;set term pop";

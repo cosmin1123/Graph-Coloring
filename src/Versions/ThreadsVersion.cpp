@@ -32,18 +32,23 @@ struct ThreadParam{
 void* doThreadWork(void* argument);
 
 int main(int argc, char** argv){
+	int graphSize = GSIZE;
 	if (argc  < 2){
 		cout << "Usage: " << argv[0] << " <num_of_threads>" << endl;
 		return -1;
 	}
 
+	if(argc > 2) {
+		graphSize = atoi(argv[2]);
+	}
+
 	int numOfThreads = atoi(argv[1]);
 
 	Graph g;
-    g.Generate(GSIZE, 50);
+    g.Generate(graphSize, 50);
 
-    std::cout << "Graf initial:\n";
-	g.Print();
+    //std::cout << "Graf initial:\n";
+	//g.Print();
 
 	std::vector<unsigned int> IdSet;
 	for (int i = 0; i < g.allNodes.size(); i++)
@@ -86,8 +91,8 @@ int main(int argc, char** argv){
 		pthread_join(threads[i], NULL);
 	}
 
-	std::cout << "Graf final:\n";
-	g.Print();
+	//std::cout << "Graf final:\n";
+	//g.Print();
 
 }
 
