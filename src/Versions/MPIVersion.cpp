@@ -36,9 +36,13 @@ double time_diff() {
 	return diff;
 }
 
-int main(int argc, char** argv)
-{
-	double measuredTime;
+int main(int argc, char** argv) {
+
+	int graphSize = GSIZE;
+
+	if(argc > 1) {
+		graphSize = atoi(argv[1]);
+	}
 
 	int rank, size;
 
@@ -50,10 +54,6 @@ int main(int argc, char** argv)
     MPI_Comm_rank(MPI_COMM_WORLD, &rank);
     MPI_Comm_size(MPI_COMM_WORLD, &size);
 
-    if(!rank)
-    {
-    	time_diff();
-    }
 
     //------- Data Initialization and Distribution -------//
     bool ImDone = false, active = true;
@@ -62,14 +62,14 @@ int main(int argc, char** argv)
     {
     	activeThreads.push_back(i);
     }
-    unsigned int nodesCount = GSIZE / size;
+    unsigned int nodesCount = graphSize / size;
     if (rank == size - 1)
     {
-    	nodesCount += (GSIZE % size);
+    	nodesCount += (graphSize % size);
     }
     std::vector<CNod> myNodes;
     Graph g;
-    g.Generate(GSIZE, 50);			//Generates the same for all threads with a static seed
+    g.Generate(graphSize, 50);			//Generates the same for all threads with a static seed
 
     MPI_Barrier(MPI_COMM_WORLD);
 
@@ -83,8 +83,8 @@ int main(int argc, char** argv)
     	return 0;
     }
     
-    int startingPoint = rank * (GSIZE / size);
-    int endPoint = rank * (GSIZE / size) + nodesCount;
+    int startingPoint = rank * (graphSize / size);
+    int endPoint = rank * (graphSize / size) + nodesCount;
     for (int i = startingPoint; i < endPoint; i++)
     {
     	CNod nod;
@@ -387,14 +387,6 @@ int main(int argc, char** argv)
     }
 	
     MPI_Barrier(MPI_COMM_WORLD);
-
-    if (!rank)
-    {
-    	measuredTime = time_diff();
-    	std::ofstream f("Timp MPI.txt", std::ios::app);
-    	f << GSIZE << ": " << measuredTime << "sec";
-    	f.close();
-    }
 
     MPI_Finalize();	
 	return 0;

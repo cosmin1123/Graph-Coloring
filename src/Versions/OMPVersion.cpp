@@ -7,6 +7,8 @@
 
 #define GSIZE 8
 
+using namespace std;
+
 double time_diff() {
 	static double begin_time = 0;
 
@@ -19,19 +21,29 @@ double time_diff() {
 	return diff;
 }
 
-int main()
-{
-	double measuredTime;
-	time_diff();
-	int nthreads, tid;
-    int i;
+int main(int argc, char** argv) {
+
+	int graphSize = GSIZE;
+	if (argc  < 2){
+		cout << "Usage: " << argv[0] << " <num_of_threads>" << endl;
+		return -1;
+	}
+
+	if(argc > 2) {
+		graphSize = atoi(argv[2]);
+	}
+
+	int numOfThreads = atoi(argv[1]);
+	int i;
+	
+	omp_set_num_threads(numOfThreads);
 
 	Graph g;
-    g.Generate(GSIZE, 50);
+    g.Generate(graphSize, 50);
 	std::vector<unsigned int> IdSet;
 
-	std::cout << "Graf initial:\n";
-	g.Print();
+	//std::cout << "Graf initial:\n";
+	//g.Print();
 
 	for (int i = 0; i < g.allNodes.size(); i++)
 	{
@@ -102,12 +114,8 @@ int main()
 		}
 	}
 	
-	std::cout << "Graf final:\n";
-	g.Print();
+	//std::cout << "Graf final:\n";
+	//g.Print();
 
-	measuredTime = time_diff();
-	std::ofstream f("Timp OMP.txt", std::ios::app);
-	f << GSIZE << ": " << measuredTime << "sec";
-	f.close();
 	return 0;
 }
