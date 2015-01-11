@@ -1,11 +1,9 @@
-cd src
 rm mpi_out
 rm omp_out
 rm thread_out
-make clean
-make build
 
 GSIZE=500
+
 
 for VARIABLE in 1 2 3 4 5 6 7 8
 do
